@@ -14,11 +14,9 @@
 			$("p").replaceWith("<p>good tag +1~</p>");
 			$("current_tag")
 			// request to server
-			var reg = new RegExp(' ', "g");
-			var container_name= $("#container_name").text().replace(reg, '+');
-			var container_tag= $("#current_tag").text().replace(reg, '+');
-			$.get("accept/" + container_name + "/" + container_tag, function(data, status) {
-				// alert("数据：" + data + "\n状态：" + status);
+			var container_name = urlEncode($("#container_name").text());
+			var container_tag = urlEncode($("#current_tag").text());
+			$.post("accept", {ctnname:container_name, tag:container_tag}, function(data) {
 				updateCtn(data);
 			});
 		});
@@ -30,7 +28,6 @@
 			$("#ctn_profile").hide();
 			$("#tag_start").hide();
 			$.get("start", function(data, status) {
-				// alert("Info: " + ctnObj.name + "\n" + ctnObj.short_desc + "\t" + ctnObj.tag + "\n状态：" + status);
 				updateCtn(data);
 			});
 		});
@@ -40,11 +37,9 @@
 		$("#incorrect").click(function() {
 			$("p").replaceWith("<p>bad tag +1~</p>");
 			// request to server
-			var reg = new RegExp(' ', "g");
-			var container_name = $("#container_name").text().replace(reg, '+');
-			var container_tag = $("#current_tag").text().replace(reg, '+');
-			$.get("deny/" + container_name + "/" + container_tag, function(data, status) {
-				// alert("数据：" + data + "\n状态：" + status);
+			var container_name = urlEncode($("#container_name").text());
+			var container_tag = urlEncode($("#current_tag").text());
+			$.post("deny", {ctnname:container_name, tag:container_tag}, function(data) {
 				updateCtn(data);
 			});
 		});
@@ -55,6 +50,14 @@
 		$("#container_name").replaceWith("<h5 class=card-title text-lg-center\" id=\"container_name\">" + ctnObj.name + "</h5>");
 		$("#current_tag").replaceWith("<span id=\"current_tag\" class=\"text-lg-center\">" + ctnObj.tag + "</span> ");
 		$("#container_desc").replaceWith("<label class=\"card-body text-lg-center\" id=\"container_desc\">Short Description: " + ctnObj.short_desc + "</label>");		
+	}
+	
+	function urlEncode(raw_data){
+		var reg = new RegExp(' ', "g");
+		var data = raw_data.replace(reg, "%2B");
+		reg = new RegExp('/', "g");
+		data = data.replace(reg,"%2F");
+		return data;
 	}
 </script>
 
