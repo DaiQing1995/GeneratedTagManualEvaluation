@@ -12,6 +12,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.dq.entity.ContainerInfo;
 import com.dq.entity.TagType;
 import com.dq.utils.DBUitls;
+import com.dq.utils.UrlDecodeUtils;
 
 /**
  * Server layer for container tag information
@@ -105,7 +106,7 @@ public class ContainerInfoServer {
 	 *             server is not synchronized with client
 	 */
 	public void denyTag(String ctnname, String tag) throws Exception {
-		ctnname = ctnname.replaceAll("\\+", " ");
+		ctnname = UrlDecodeUtils.decodeData(ctnname);
 		if (!ctnname.equals(currentCtn.getName())) {
 			throw new Exception("client is not synchronized with server");
 		}
@@ -125,7 +126,7 @@ public class ContainerInfoServer {
 	 * @throws Exception
 	 */
 	public void acceptTag(String ctnname, String tag) throws Exception {
-		ctnname = ctnname.replaceAll("\\+", " ");
+		ctnname = UrlDecodeUtils.decodeData(ctnname);
 		if (!ctnname.equals(currentCtn.getName())) {
 			throw new Exception("client is not synchronized with server");
 		}

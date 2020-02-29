@@ -1,10 +1,10 @@
 package com.dq.controller;
 
-
 import java.io.IOException;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -15,9 +15,9 @@ import com.dq.server.ContainerInfoServer;
 @Controller
 public class TagASMTController {
 
-	//TODO: add client cookie or uuid
+	// TODO: add client cookie or uuid
 	private ContainerInfoServer ctnServer;
-	
+
 	@ResponseBody
 	@RequestMapping("/start")
 	public String markStart() {
@@ -28,22 +28,21 @@ public class TagASMTController {
 		} catch (IOException e) {
 			e.printStackTrace();
 			return "error";
-		} 
+		}
 		return ret.toJSONString();
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/deny/{ctnname}/{tag}", method = RequestMethod.GET)
-	public String denyTag(@PathVariable("ctnname") String ctnname, @PathVariable("tag") String tag) throws Exception{
-		ctnServer.denyTag(ctnname, tag);
-		return ctnServer.getNextCtnTags().toJSONString();
-	}
-	
-	@ResponseBody
-	@RequestMapping(value = "/accept/{ctnname}/{tag}", method = RequestMethod.GET)
-	public String acceptTag(@PathVariable("ctnname") String ctnname, @PathVariable("tag") String tag) throws Exception{
-		ctnServer.acceptTag(ctnname, tag);
+	@RequestMapping(value = "/deny", method = RequestMethod.POST)
+	public String denyTag(HttpServletRequest request) throws Exception {
+		ctnServer.denyTag(request.getParameter("ctnname"), request.getParameter("tag"));
 		return ctnServer.getNextCtnTags().toJSONString();
 	}
 
+	@ResponseBody
+	@RequestMapping(value = "/accept", method = RequestMethod.POST)
+	public String acceptTag(HttpServletRequest request) throws Exception {
+		ctnServer.acceptTag(request.getParameter("ctnname"), request.getParameter("tag"));
+		return ctnServer.getNextCtnTags().toJSONString();
+	}
 }
