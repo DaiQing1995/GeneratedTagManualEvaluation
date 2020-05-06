@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Container Tag Assessment</title>
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<link href="css/bootstrap-grid.css" rel="stylesheet">
+<script type="text/javascript" src="js/jquery-3.4.1.min.js"></script>
+
+<script type="text/javascript">
+
+	$(document).ready(function() {
+		$("#correct").click(function() {
+			$("p").replaceWith("<p>good tag +1~</p>");
+			$("current_tag")
+			// request to server
+			var container_name = urlEncode($("#container_name").text());
+			var container_tag = urlEncode($("#current_tag").text());
+			$.post("accept", {ctnname:container_name, tag:container_tag}, function(data) {
+				updateCtn(data);
+			});
+		});
+	});
+
+	$(document).ready(function() {
+		$("#tag_start").click(function() {
+			$("#tag_frame").removeAttr("hidden");
+			$("#ctn_profile").hide();
+			$("#tag_start").hide();
+			$.get("start", function(data, status) {
+				updateCtn(data);
+			});
+		});
+	});
+
+	$(document).ready(function() {
+		$("#incorrect").click(function() {
+			$("p").replaceWith("<p>bad tag +1~</p>");
+			// request to server
+			var container_name = urlEncode($("#container_name").text());
+			var container_tag = urlEncode($("#current_tag").text());
+			$.post("deny", {ctnname:container_name, tag:container_tag}, function(data) {
+				updateCtn(data);
+			});
+		});
+	});
+	
+	function updateCtn(data){
+		ctnObj = JSON.parse(data)
+		$("#container_name").replaceWith("<h5 class=card-title text-lg-center\" id=\"container_name\">" + ctnObj.name + "</h5>");
+		$("#current_tag").replaceWith("<span id=\"current_tag\" class=\"text-lg-center\">" + ctnObj.tag + "</span> ");
+		$("#container_desc").replaceWith("<label class=\"card-body text-lg-center\" id=\"container_desc\">Short Description: " + ctnObj.short_desc + "</label>");		
+	}
+	
+	function urlEncode(raw_data){
+		var reg = new RegExp(' ', "g");
+		var data = raw_data.replace(reg, "%2B");
+		reg = new RegExp('/', "g");
+		data = data.replace(reg,"%2F");
+		return data;
+	}
+</script>
+
+</head>
+<br />
+<div>
+	<input id="tag_start" class="btn btn-primary btn-lg btn-block"
+		value="Start Tagging" /> <br />
+</div>
+<br />
+<div>
+	<input id="ctn_profile" class="btn btn-secondary btn-lg btn-block"
+		value="container profile Demo">
+</div>
+
+<div id="tag_frame" class="container" hidden="hidden">
+	<div class="row">
+
+		<div class="col-lg-3">
+			<input id="incorrect" class="btn btn-danger btn-lg" value="Wrong">
+		</div>
+
+		<div class="col-lg-6 card">
+			<h5 class="card-title text-lg-center" id="container_name">Container Name</h5>
+			<label class="card-body text-lg-center" id="container_desc">Short Desp</label> 
+			<label>Tag: </label>
+			<span id="current_tag" class="text-lg-center">tag_demo</span> 
+			<br />
+			<p>status</p>
+		</div>
+
+		<div class="col-lg-3">
+			<input id="correct" class="btn btn-success btn-lg" value="Correct">
+		</div>
+
+	</div>
+</div>
+
+</body>
+</html>
